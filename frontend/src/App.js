@@ -1,21 +1,19 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
+import HomePage from "./components/HomePage";
 
 export default class App extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            songs: []
-        };
-    }
+	constructor(props) {
+		super(props);
+	}
 
-    render() {
-        return (
-            <div>
-                <h1>Music Controller</h1>
-            </div>
-        );
-    }
+	render() {
+		return (
+			<div className="center">
+				<HomePage />
+			</div>
+		);
+	}
 }
 
 const appDiv = document.getElementById("app");
