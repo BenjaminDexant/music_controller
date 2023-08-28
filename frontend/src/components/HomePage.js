@@ -29,6 +29,10 @@ const RenderHomePage =
 const HomePage = () => {
 	const [roomCode, setRoomCode] = useState(undefined);
 
+	const clearRoomCode = () => {
+		setRoomCode(undefined);
+	};
+
 	useEffect(() => {
 		fetch("/api/user-in-room")
 			.then((response) => response.json())
@@ -49,7 +53,7 @@ const HomePage = () => {
 				/>
 				<Route path="/join" element={<JoinRoomPage />} />
 				<Route path="/create" element={<CreateRoomPage />} />
-				<Route path="/room/:roomCode" element={<Room />} />
+				<Route path="/room/:roomCode" element={<Room leaveRoomCallback={clearRoomCode} />} />
 			</Routes>
 		</Router>
 	);

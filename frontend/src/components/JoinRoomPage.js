@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { TextField, Button, Grid, Typography } from "@material-ui/core";
-import { Link, redirect } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const JoinRoomPage = () => {
+  const navigate = useNavigate();
   const [roomCode, setRoomCode] = useState("");
 
   const handleTextFieldChange = (e) => {
@@ -21,7 +22,7 @@ const JoinRoomPage = () => {
       .then((response) => {
         if (response.ok) {
           console.log("Room joined!")
-          redirect(`/room/${roomCode}`);
+          navigate(`/room/${roomCode}`, { replace: true });
         } else {
           console.error("Failed to join room.");
         }
