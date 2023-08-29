@@ -1,4 +1,6 @@
-/frontend/node_modules
 *.pyc
 .vscode
 /frontend/static/frontend/
+/frontend/node_modules
+/api/migrations
+.env
