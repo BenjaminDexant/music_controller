@@ -9,8 +9,24 @@ const Room = ({ leaveRoomCallback }) => {
     const [guestCanPause, setGuestCanPause] = useState(false);
     const [isHost, setIsHost] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
+    const [spotifyAuthenticated, setSpotifyAuthenticated] = useState(false);
 
     let { roomCode } = useParams();
+
+    const authenticateSpotify = () => {
+        fetch("/spotify/is-authenticated")
+            .then((response) => response.json())
+            .then((data) => {
+                setSpotifyAuthenticated(data.status);
+                if (!data.status) {
+                    fetch("/spotify/get-auth-url")
+                        .then((response) => response.json())
+                        .then((data) => window.location.replace(data.url))
+                        .catch((error) => console.error(error));
+                }
+            })
+            .catch((error) => console.error(error));
+    }
 
     const getRoomDetails = () => {
         fetch("/api/get-room" + "?code=" + roomCode)
@@ -52,6 +68,12 @@ const Room = ({ leaveRoomCallback }) => {
             setIsHost(false);
         };
     }, []);
+
+    useEffect(() => {
+        if (isHost) {
+            authenticateSpotify();
+        }
+    }, [isHost]);
 
     const renderSettingsButton =
         <Grid item xs={12} align="center">
