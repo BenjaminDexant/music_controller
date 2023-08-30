@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Grid, Button, Typography } from "@material-ui/core";
 import CreateRoomPage from "./CreateRoomPage";
+import MusicPlayer from "./MusicPlayer";
 
 const Room = ({ leaveRoomCallback }) => {
     const navigate = useNavigate();
@@ -10,6 +11,9 @@ const Room = ({ leaveRoomCallback }) => {
     const [isHost, setIsHost] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
     const [spotifyAuthenticated, setSpotifyAuthenticated] = useState(false);
+    const [currentSong, setCurrentSong] = useState({});
+
+    console.log("Current Song :", currentSong)
 
     let { roomCode } = useParams();
 
@@ -17,6 +21,7 @@ const Room = ({ leaveRoomCallback }) => {
         fetch("/spotify/is-authenticated")
             .then((response) => response.json())
             .then((data) => {
+                console.log("Spotify Authenticated :", data.status);
                 setSpotifyAuthenticated(data.status);
                 if (!data.status) {
                     fetch("/spotify/get-auth-url")
@@ -59,6 +64,23 @@ const Room = ({ leaveRoomCallback }) => {
             .catch((error) => console.error(error));
     }
 
+    const getCurrentSong = () => {
+        fetch("/spotify/current-song")
+            .then((response) => {
+                console.log("Is a song playing ?", response.ok);
+                if (!response.ok) {
+                    return {};
+                } else {
+                    return response;
+                }
+            })
+            .then((data) => {
+                setCurrentSong({ data });
+            })
+            .catch((error) => console.error(error));
+    }
+
+
     useEffect(() => {
         getRoomDetails();
 
@@ -74,6 +96,11 @@ const Room = ({ leaveRoomCallback }) => {
             authenticateSpotify();
         }
     }, [isHost]);
+
+    useEffect(() => {
+        const interval = setInterval(getCurrentSong, 1000);
+        return () => clearInterval(interval);
+    }, [spotifyAuthenticated]);
 
     const renderSettingsButton =
         <Grid item xs={12} align="center">
@@ -129,6 +156,7 @@ const Room = ({ leaveRoomCallback }) => {
                         Host: {isHost?.toString()}
                     </Typography>
                 </Grid>
+                <MusicPlayer {...currentSong} />
                 {isHost ? renderSettingsButton : null}
                 <Grid item xs={12} align="center">
                     <Button
