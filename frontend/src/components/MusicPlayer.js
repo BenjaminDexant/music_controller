@@ -10,7 +10,7 @@ import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import PauseIcon from "@material-ui/icons/Pause";
 import SkipNextIcon from "@material-ui/icons/SkipNext";
 
-const MusicPlayer = ({ time, duration, image_url, title, artist, is_playing }) => {
+const MusicPlayer = ({ time, duration, image_url, title, artist, is_playing, votes, votes_required }) => {
     const [songProgress, setSongProgress] = useState(0);
 
     const pauseSong = () => {
@@ -27,6 +27,14 @@ const MusicPlayer = ({ time, duration, image_url, title, artist, is_playing }) =
             headers: { "Content-Type": "application/json" },
         };
         fetch("/spotify/play-song", requestOptions);
+    };
+
+    const skipSong = () => {
+        const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        };
+        fetch("/spotify/skip-song", requestOptions);
     };
 
     useEffect(() => {
@@ -47,11 +55,11 @@ const MusicPlayer = ({ time, duration, image_url, title, artist, is_playing }) =
                         {artist}
                     </Typography>
                     <div>
-                        <IconButton onClick={is_playing ? pauseSong() : playSong()}>
+                        <IconButton onClick={is_playing ? pauseSong : playSong}>
                             {is_playing ? <PauseIcon /> : <PlayArrowIcon />}
                         </IconButton>
-                        <IconButton>
-                            <SkipNextIcon />
+                        <IconButton onClick={skipSong}>
+                            <SkipNextIcon /> {votes} / {votes_required}
                         </IconButton>
                     </div>
                 </Grid>
